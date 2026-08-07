@@ -11,6 +11,10 @@ Minecraft = 1.20.1
 Forge > 47.2.0
 ## Installation
 This mod may not be published on Modrinth or Curseforge. You can only build this from this project.
+```
+    git clone https://github.com/YLSora/RollerCart
+    gradlew.bat clean build
+```
 ## New Features
 Make sure that you have already known how to use the original mods. If you are new, check the information of [SplineCart](https://modrinth.com/mod/splinecart) and [ForkCart](https://modrinth.com/mod/forkcart) first.
 ### Basic Features

@@ -6,7 +6,7 @@ license="MIT"
 modId="rollercart"
 version="${version}"
 displayName="RollerCart"
-description='''Minecart tracks that curve - forked and modified by MinazukiSora'''
+description='''Forked and modified Forkcart mod by MinazukiSora'''
 authors="FoundationGames, ImplicitSaber, MinazukiSora, GPT 5.6 Sol, SWE 1.7"
 logoFile="assets/rollercart/icon.png"
 
