@@ -1,5 +1,5 @@
 # RollerCart
-A fork of the [Forkcart mod](https://github.com/ImplicitSaber/Forkcart) by ImplicitSabe, which was originally [Splinecart](https://github.com/FoundationGames/Splinecart) by FoundationGames. This fork was created to modify and improve related mechanisms and add new features to the mod, as well as porting their works to Minecraft 1.20.1 Forge, with the helps of Artificial Intelligence.
+A fork of the [Forkcart mod](https://github.com/ImplicitSaber/Forkcart) by ImplicitSaber, which was originally [Splinecart](https://github.com/FoundationGames/Splinecart) by FoundationGames. This fork was created to modify and improve related mechanisms and add new features to the mod, as well as porting their works to Minecraft 1.20.1 Forge, with the helps of Artificial Intelligence.
 ## Features
 This mod theoretically contains every feature presented in both Splinecart mod and Forkcart mod. Additionally, this mod has a few features as well as many bugfixes:
 1. New types of track ties such as activator ties and detector ties.
