@@ -1,5 +1,5 @@
 # RollerCart
-A fork of the [Forkcart mod](https://github.com/ImplicitSaber/Forkcart) by ImplicitSaber, which was originally [Splinecart](https://github.com/FoundationGames/Splinecart) by FoundationGames. This fork was created to modify and improve related mechanisms and add new features to the mod, as well as porting their works to Minecraft 1.20.1 Forge, with the helps of Artificial Intelligence.
+A fork of the [Forkcart mod](https://github.com/ImplicitSaber/Forkcart) by ImplicitSaber, which was original [Splinecart](https://github.com/FoundationGames/Splinecart) by FoundationGames. This fork was created to modify and improve related mechanisms and add new features to the mod, as well as porting their works to Minecraft 1.20.1 Forge, with the helps of Artificial Intelligence.
 ## Features
 This mod theoretically contains every feature presented in both Splinecart mod and Forkcart mod. Additionally, this mod has a few features as well as many bugfixes:
 1. New types of track ties such as activator ties and detector ties.
@@ -10,8 +10,9 @@ This mod theoretically contains every feature presented in both Splinecart mod a
 Minecraft = 1.20.1
 Forge > 47.2.0
 ## Installation
-This mod may not be published on Modrinth or Curseforge. You can only build this from this project.
+This mod may not be published on Modrinth or Curseforge. You can only build this from this page.
 ```
+    git init
     git clone https://github.com/YLSora/RollerCart
     gradlew.bat clean build
 ```
@@ -24,7 +25,7 @@ Make sure that you have already known how to use the original mods. If you are n
 4. Physical change of tracks in order that minecarts can not climb the overly steep pathway, just like magnetic tracks.
 5. Improve the apperence of chain tracks and station tracks to manifest their new mechanisms, so that they can be used more easily and reasonably.
 
-## AI Mention
+## AI Used Mention
 This mod can only be done within AI technologies, mostly completed with GPT 5.6 sol Medium and SWE 1.7 Max. This may cause issues that difficult to preserve. In severe cases, due to reasons not being detected and tested, this mod may causes damage to your game data. Reading this document indicates that you are already aware of it.
 
 ## License
@@ -49,3 +50,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 I am not affiliated with the original creators of Splinecart or Forkcart. This fork is only possible because of the open licenses of original mods. Please do not report issues with this mod to the issue trackers of original mods, instead report them [here](https://github.com/YLSora/RollerCart/issues).
+This project is my first attempt on coding. Study and refer only.
