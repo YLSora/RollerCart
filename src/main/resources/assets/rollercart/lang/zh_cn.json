@@ -1,0 +1,47 @@
+{
+  "block.rollercart.track_ties": "轨道枕木",
+  "block.rollercart.switch_ties": "道岔枕木",
+  "block.rollercart.invisible_ties": "隐形枕木",
+  "block.rollercart.shuttle_ties": "往复枕木",
+  "block.rollercart.detector_ties": "探测枕木",
+  "block.rollercart.activator_ties": "激活枕木",
+  "item.rollercart.track": "轨道",
+  "item.rollercart.chain_track": "链式轨道",
+  "item.rollercart.station_track": "站台轨道",
+  "item.rollercart.brake_track": "制动轨道",
+  "item.rollercart.magnetic_track": "磁力轨道",
+
+  "item.rollercart.track_ties.desc": "放置时互动可旋转方向",
+  "item.rollercart.switch_ties.desc": "充能时将矿车推向右侧",
+  "item.rollercart.invisible_ties.desc": "手持对应物品时才会显形",
+  "item.rollercart.detector_ties.desc": "矿车经过时输出不同强度的红石信号",
+  "item.rollercart.activator_ties.desc": "充能时激活矿车",
+  "item.rollercart.shuttle_ties.desc": "未充能时使矿车反向行驶",
+
+  "item.rollercart.track.desc": "连接两个轨道枕木方块",
+  "item.rollercart.track.standard.desc": "标准轨道，无特殊效果",
+  "item.rollercart.track.chain.desc": "沿轨道牵引矿车，可红石充能加速",
+  "item.rollercart.track.station.desc": "相当于制动轨道与链式轨道的结合",
+  "item.rollercart.track.brake.desc": "未充能时减缓矿车速度",
+  "item.rollercart.track.magnetic.desc": "根据红石信号强度加速矿车，但无法爬上陡坡",
+
+  "item.rollercart.track.origin": "已选定起始轨道",
+  "item.rollercart.track.clear_hint": "对非轨道方块使用可取消起始点选择",
+
+  "hud.rollercart.cancel": "[取消]",
+  "hud.rollercart.create_track": "[创建轨道]",
+  "hud.rollercart.right_click": "%s：%s",
+
+  "entity.rollercart.track_follower": "轨道跟随器",
+
+  "rollercart.config.query_value": "配置项 '%s' 当前值为 '%s'。",
+  "rollercart.config.set_value": "配置项 '%s' 已设置为 '%s'。",
+
+  "rollercart.config.rollercart_client.rotate_camera.desc": "【警告】该功能可能会导致严重的眩晕效果，建议不适者关闭此功能",
+  "rollercart.config.rollercart_client.track_resolution.desc": "数值越高性能越低、画质越高。决定渲染时轨道分段数量，分段过少会导致轨道呈现锯齿状。不影响矿车在轨道上的运动。",
+  "rollercart.config.rollercart_client.track_render_distance.desc": "当起始轨道枕木方块与您距离超过此数值（区块数）时，将停止渲染对应轨道。",
+
+  "tag.item.rollercart.track": "轨道",
+
+  "itemGroup.rollercart": "过山车"
+}

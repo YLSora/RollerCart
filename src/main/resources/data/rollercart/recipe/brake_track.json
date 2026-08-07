@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:rail"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    " B ",
+    "CAC",
+    " B "
+  ],
+  "result": {
+    "count": 4,
+    "id": "rollercart:brake_track"
+  }
+}

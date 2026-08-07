@@ -1,0 +1,48 @@
+{
+  "block.rollercart.track_ties": "Track Ties",
+  "block.rollercart.switch_ties": "Switch Ties",
+  "block.rollercart.invisible_ties": "Invisible Ties",
+  "block.rollercart.shuttle_ties": "Shuttle Ties",
+  "block.rollercart.detector_ties": "Detector Ties",
+  "block.rollercart.activator_ties": "Activator Ties",
+  "item.rollercart.track": "Track",
+  "item.rollercart.chain_track": "Chain Track",
+  "item.rollercart.station_track": "Station Track",
+  "item.rollercart.brake_track": "Brake Track",
+  "item.rollercart.magnetic_track": "Magnetic Track",
+
+  "item.rollercart.track_ties.desc": "Interact to rotate when placed",
+  "item.rollercart.switch_ties.desc": "Pushes carts off to the right when powered",
+  "item.rollercart.invisible_ties.desc": "Invisible unless holding item",
+  "item.rollercart.shuttle_ties.desc": "Reverses carts when not powered",
+  "item.rollercart.detector_ties.desc": "Outputs a redstone signal of varying strength when a cart passes",
+  "item.rollercart.activator_ties.desc": "Activates minecarts when powered",
+
+  "item.rollercart.track.desc": "Links two Track Ties blocks together",
+  "item.rollercart.track.standard.desc": "Regular track, no modifiers",
+  "item.rollercart.track.chain.desc": "Pulls minecarts along the track, can be powered by redstone to accelerate",
+  "item.rollercart.track.station.desc": "A combination of a brake track and a chain drive track",
+  "item.rollercart.track.brake.desc": "Slows carts down if not powered",
+  "item.rollercart.track.magnetic.desc": "Accelerates minecarts based on redstone signal, but cannot climb steep slopes",
+
+  "item.rollercart.track.origin": "First track selected",
+  "item.rollercart.track.clear_hint": "Cancel first selection by using on a non-track block",
+
+  "hud.rollercart.cancel": "[Cancel]",
+  "hud.rollercart.create_track": "[Create Track]",
+  "hud.rollercart.right_click": "%s: %s",
+
+  "entity.rollercart.track_follower": "Track Follower",
+
+  "rollercart.config.query_value": "Option '%s' is currently '%s'.",
+  "rollercart.config.set_value": "Option '%s' has been set to '%s'.",
+
+  "rollercart.config.rollercart_client.rotate_camera.desc": "Recommended to be set to 'false' for users prone to motion sickness. When set to 'false', your player camera orientation will remain level while riding a non-level RollerCart track. Non-level tracks are best experienced in third person when 'rotate_camera' is set to 'false'.",
+  "rollercart.config.rollercart_client.track_resolution.desc": "Higher values decrease performance and increase visual quality. Determines how many segments tracks will be cut into when rendering, with fewer segments making tracks appear jagged. Does not affect minecart movement along tracks.",
+  "rollercart.config.rollercart_client.track_render_distance.desc": "When the origin track tie block is this many chunks away from you, its track will stop rendering.",
+
+  "tag.item.rollercart.track": "Track",
+
+  "itemGroup.rollercart": "RollerCart"
+
+}

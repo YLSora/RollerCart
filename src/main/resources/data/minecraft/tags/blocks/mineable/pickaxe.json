@@ -1,0 +1,10 @@
+{
+  "values": [
+    "rollercart:track_ties",
+    "rollercart:switch_ties",
+    "rollercart:invisible_ties",
+    "rollercart:shuttle_ties",
+    "rollercart:detector_ties",
+    "rollercart:activator_ties"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "io.github.minazukisora.rollercart.mixin.client",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "CameraMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "EntityRenderDispatcherMixin",
+    "InGameOverlayRendererMixin",
+    "MinecartInsideSoundInstanceMixin",
+    "MovingMinecartSoundInstanceMixin",
+    "WorldRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

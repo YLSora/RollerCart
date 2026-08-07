@@ -1,0 +1,50 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "rollercart:block/activator_ties_on",
+    "rail": "rollercart:block/activator_ties_on"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0.5,
+        0
+      ],
+      "to": [
+        16,
+        0.5,
+        16
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "up": {
+          "texture": "#rail",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#rail",
+          "uv": [
+            0,
+            16,
+            16,
+            0
+          ]
+        }
+      }
+    }
+  ]
+}

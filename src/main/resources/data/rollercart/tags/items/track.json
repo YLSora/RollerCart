@@ -1,0 +1,9 @@
+{
+  "values": [
+    "rollercart:track",
+    "rollercart:chain_track",
+    "rollercart:station_track",
+    "rollercart:brake_track",
+    "rollercart:magnetic_track"
+  ]
+}

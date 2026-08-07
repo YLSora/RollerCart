@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="rollercart"
+version="${version}"
+displayName="RollerCart"
+description='''Minecart tracks that curve - forked and modified by MinazukiSora'''
+authors="FoundationGames, ImplicitSaber, MinazukiSora, GPT 5.6 Sol, SWE 1.7"
+logoFile="assets/rollercart/icon.png"
+
+[[dependencies.rollercart]]
+modId="forge"
+mandatory=true
+versionRange="[47.2,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.rollercart]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.20.2)"
+ordering="NONE"
+side="BOTH"

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:powered_rail"
+    },
+    "B": {
+      "item": "minecraft:iron_block"
+    },
+    "C": {
+      "item": "minecraft:copper_block"
+    }
+  },
+  "pattern": [
+    " B ",
+    "CAC",
+    " B "
+  ],
+  "result": {
+    "count": 4,
+    "item": "rollercart:magnetic_track"
+  }
+}

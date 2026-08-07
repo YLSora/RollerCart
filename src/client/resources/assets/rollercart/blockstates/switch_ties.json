@@ -1,0 +1,212 @@
+{
+  "variants": {
+    "switched=false,pointing=0,facing=down": {
+      "model": "rollercart:block/track_ties_pointing_0",
+      "x": 180
+    },
+    "switched=false,pointing=0,facing=east": {
+      "model": "rollercart:block/track_ties_pointing_0",
+      "x": 90,
+      "y": 90
+    },
+    "switched=false,pointing=0,facing=north": {
+      "model": "rollercart:block/track_ties_pointing_0",
+      "x": 90
+    },
+    "switched=false,pointing=0,facing=south": {
+      "model": "rollercart:block/track_ties_pointing_0",
+      "x": 90,
+      "y": 180
+    },
+    "switched=false,pointing=0,facing=up": {
+      "model": "rollercart:block/track_ties_pointing_0"
+    },
+    "switched=false,pointing=0,facing=west": {
+      "model": "rollercart:block/track_ties_pointing_0",
+      "x": 90,
+      "y": 270
+    },
+    "switched=false,pointing=1,facing=down": {
+      "model": "rollercart:block/track_ties_pointing_1",
+      "x": 180
+    },
+    "switched=false,pointing=1,facing=east": {
+      "model": "rollercart:block/track_ties_pointing_1",
+      "x": 90,
+      "y": 90
+    },
+    "switched=false,pointing=1,facing=north": {
+      "model": "rollercart:block/track_ties_pointing_1",
+      "x": 90
+    },
+    "switched=false,pointing=1,facing=south": {
+      "model": "rollercart:block/track_ties_pointing_1",
+      "x": 90,
+      "y": 180
+    },
+    "switched=false,pointing=1,facing=up": {
+      "model": "rollercart:block/track_ties_pointing_1"
+    },
+    "switched=false,pointing=1,facing=west": {
+      "model": "rollercart:block/track_ties_pointing_1",
+      "x": 90,
+      "y": 270
+    },
+    "switched=false,pointing=2,facing=down": {
+      "model": "rollercart:block/track_ties_pointing_2",
+      "x": 180
+    },
+    "switched=false,pointing=2,facing=east": {
+      "model": "rollercart:block/track_ties_pointing_2",
+      "x": 90,
+      "y": 90
+    },
+    "switched=false,pointing=2,facing=north": {
+      "model": "rollercart:block/track_ties_pointing_2",
+      "x": 90
+    },
+    "switched=false,pointing=2,facing=south": {
+      "model": "rollercart:block/track_ties_pointing_2",
+      "x": 90,
+      "y": 180
+    },
+    "switched=false,pointing=2,facing=up": {
+      "model": "rollercart:block/track_ties_pointing_2"
+    },
+    "switched=false,pointing=2,facing=west": {
+      "model": "rollercart:block/track_ties_pointing_2",
+      "x": 90,
+      "y": 270
+    },
+    "switched=false,pointing=3,facing=down": {
+      "model": "rollercart:block/track_ties_pointing_3",
+      "x": 180
+    },
+    "switched=false,pointing=3,facing=east": {
+      "model": "rollercart:block/track_ties_pointing_3",
+      "x": 90,
+      "y": 90
+    },
+    "switched=false,pointing=3,facing=north": {
+      "model": "rollercart:block/track_ties_pointing_3",
+      "x": 90
+    },
+    "switched=false,pointing=3,facing=south": {
+      "model": "rollercart:block/track_ties_pointing_3",
+      "x": 90,
+      "y": 180
+    },
+    "switched=false,pointing=3,facing=up": {
+      "model": "rollercart:block/track_ties_pointing_3"
+    },
+    "switched=false,pointing=3,facing=west": {
+      "model": "rollercart:block/track_ties_pointing_3",
+      "x": 90,
+      "y": 270
+    },
+    "switched=true,pointing=0,facing=down": {
+      "model": "rollercart:block/switch_ties_pointing_0",
+      "x": 180
+    },
+    "switched=true,pointing=0,facing=east": {
+      "model": "rollercart:block/switch_ties_pointing_0",
+      "x": 90,
+      "y": 90
+    },
+    "switched=true,pointing=0,facing=north": {
+      "model": "rollercart:block/switch_ties_pointing_0",
+      "x": 90
+    },
+    "switched=true,pointing=0,facing=south": {
+      "model": "rollercart:block/switch_ties_pointing_0",
+      "x": 90,
+      "y": 180
+    },
+    "switched=true,pointing=0,facing=up": {
+      "model": "rollercart:block/switch_ties_pointing_0"
+    },
+    "switched=true,pointing=0,facing=west": {
+      "model": "rollercart:block/switch_ties_pointing_0",
+      "x": 90,
+      "y": 270
+    },
+    "switched=true,pointing=1,facing=down": {
+      "model": "rollercart:block/switch_ties_pointing_1",
+      "x": 180
+    },
+    "switched=true,pointing=1,facing=east": {
+      "model": "rollercart:block/switch_ties_pointing_1",
+      "x": 90,
+      "y": 90
+    },
+    "switched=true,pointing=1,facing=north": {
+      "model": "rollercart:block/switch_ties_pointing_1",
+      "x": 90
+    },
+    "switched=true,pointing=1,facing=south": {
+      "model": "rollercart:block/switch_ties_pointing_1",
+      "x": 90,
+      "y": 180
+    },
+    "switched=true,pointing=1,facing=up": {
+      "model": "rollercart:block/switch_ties_pointing_1"
+    },
+    "switched=true,pointing=1,facing=west": {
+      "model": "rollercart:block/switch_ties_pointing_1",
+      "x": 90,
+      "y": 270
+    },
+    "switched=true,pointing=2,facing=down": {
+      "model": "rollercart:block/switch_ties_pointing_2",
+      "x": 180
+    },
+    "switched=true,pointing=2,facing=east": {
+      "model": "rollercart:block/switch_ties_pointing_2",
+      "x": 90,
+      "y": 90
+    },
+    "switched=true,pointing=2,facing=north": {
+      "model": "rollercart:block/switch_ties_pointing_2",
+      "x": 90
+    },
+    "switched=true,pointing=2,facing=south": {
+      "model": "rollercart:block/switch_ties_pointing_2",
+      "x": 90,
+      "y": 180
+    },
+    "switched=true,pointing=2,facing=up": {
+      "model": "rollercart:block/switch_ties_pointing_2"
+    },
+    "switched=true,pointing=2,facing=west": {
+      "model": "rollercart:block/switch_ties_pointing_2",
+      "x": 90,
+      "y": 270
+    },
+    "switched=true,pointing=3,facing=down": {
+      "model": "rollercart:block/switch_ties_pointing_3",
+      "x": 180
+    },
+    "switched=true,pointing=3,facing=east": {
+      "model": "rollercart:block/switch_ties_pointing_3",
+      "x": 90,
+      "y": 90
+    },
+    "switched=true,pointing=3,facing=north": {
+      "model": "rollercart:block/switch_ties_pointing_3",
+      "x": 90
+    },
+    "switched=true,pointing=3,facing=south": {
+      "model": "rollercart:block/switch_ties_pointing_3",
+      "x": 90,
+      "y": 180
+    },
+    "switched=true,pointing=3,facing=up": {
+      "model": "rollercart:block/switch_ties_pointing_3"
+    },
+    "switched=true,pointing=3,facing=west": {
+      "model": "rollercart:block/switch_ties_pointing_3",
+      "x": 90,
+      "y": 270
+    }
+  }
+}
