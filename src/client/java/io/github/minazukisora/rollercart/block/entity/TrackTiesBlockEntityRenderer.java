@@ -109,7 +109,7 @@ public class TrackTiesBlockEntityRenderer implements BlockEntityRenderer<TrackTi
             } else if (trackType == TrackItem.Type.STATION) {
                 float vOffset = entity.power() > 0 ? ((world.getTime() + tickDelta) * 0.15f) % 1.0f : 0.0f;
                 renderTrack(world, matrices.peek(), vertexConsumers.getBuffer(RenderLayer.getEntityCutoutNoCull(TRACK_OVERLAY_TEXTURE)),
-                        start, end, segs, 0.25f, 0.5f, vOffset, WHITE, overlay);
+                        start, end, segs, 0.5f, 0.75f, vOffset, WHITE, overlay);
             }
 
             matrices.pop();

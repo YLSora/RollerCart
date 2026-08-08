@@ -11,6 +11,7 @@ import io.github.minazukisora.rollercart.block.TrackTiesBlockEntity;
 import io.github.minazukisora.rollercart.entity.TrackFollowerEntity;
 import io.github.minazukisora.rollercart.item.LoreBlockItem;
 import io.github.minazukisora.rollercart.item.TrackItem;
+import io.github.minazukisora.rollercart.util.SUtil;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
@@ -24,9 +25,10 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.sound.SoundEvent;
+
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -50,7 +52,6 @@ public class RollerCart {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MOD_ID);
     private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MOD_ID);
-    private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MOD_ID);
     private static final DeferredRegister<ItemGroup> ITEM_GROUPS = DeferredRegister.create(RegistryKeys.ITEM_GROUP, MOD_ID);
 
     public static final RegistryObject<TrackTiesBlock> TRACK_TIES = BLOCKS.register("track_ties", () -> new TrackTiesBlock(AbstractBlock.Settings.copy(Blocks.RAIL)));
@@ -83,11 +84,11 @@ public class RollerCart {
             BlockEntityType.Builder.create(DetectorTiesBlockEntity::new, DETECTOR_TIES.get()).build(null));
     public static final RegistryObject<BlockEntityType<ActivatorTiesBlockEntity>> ACTIVATOR_TIES_BE = BLOCK_ENTITY_TYPES.register("activator_ties", () ->
             BlockEntityType.Builder.create(ActivatorTiesBlockEntity::new, ACTIVATOR_TIES.get()).build(null));
+
     public static final RegistryObject<EntityType<TrackFollowerEntity>> TRACK_FOLLOWER = ENTITY_TYPES.register("track_follower", () ->
-            EntityType.Builder.<TrackFollowerEntity>create(TrackFollowerEntity::new, SpawnGroup.MISC).setDimensions(0.25f, 0.25f).build(id("track_follower").toString()));
-    public static final Identifier CHAIN_LIFT_SOUND_ID = id("entity.track_follower.lift");
-    public static final RegistryObject<SoundEvent> CHAIN_LIFT_SOUND = SOUND_EVENTS.register("entity.track_follower.lift", () -> SoundEvent.of(CHAIN_LIFT_SOUND_ID));
-    public static final RegistryObject<ItemGroup> MOD_GROUP = ITEM_GROUPS.register("rollercart", () -> ItemGroup.builder()
+           EntityType.Builder.<TrackFollowerEntity>create(TrackFollowerEntity::new, SpawnGroup.MISC).setDimensions(0.25f, 0.25f).build(id("track_follower").toString()));
+    
+            public static final RegistryObject<ItemGroup> MOD_GROUP = ITEM_GROUPS.register("rollercart", () -> ItemGroup.builder()
             .displayName(Text.translatable("itemGroup.rollercart"))
             .icon(() -> new ItemStack(TRACK.get()))
             .entries((context, entries) -> {
@@ -113,7 +114,6 @@ public class RollerCart {
         ITEMS.register(bus);
         BLOCK_ENTITY_TYPES.register(bus);
         ENTITY_TYPES.register(bus);
-        SOUND_EVENTS.register(bus);
         ITEM_GROUPS.register(bus);
     }
 

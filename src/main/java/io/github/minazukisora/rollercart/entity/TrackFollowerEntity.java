@@ -6,7 +6,6 @@ import io.github.minazukisora.rollercart.block.ShuttleTiesBlock;
 import io.github.minazukisora.rollercart.block.SwitchTiesBlock;
 import io.github.minazukisora.rollercart.block.TrackTiesBlockEntity;
 import io.github.minazukisora.rollercart.item.TrackItem;
-import io.github.minazukisora.rollercart.util.Pose;
 import io.github.minazukisora.rollercart.util.SUtil;
 import io.github.minazukisora.rollercart.util.TrackSnapUtil;
 import net.minecraft.block.BlockState;
@@ -23,9 +22,11 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
+
 import org.joml.Matrix3d;
 import org.joml.Matrix3dc;
 import org.joml.Quaternionf;
@@ -43,8 +44,8 @@ public class TrackFollowerEntity extends Entity {
     private static final double CHAIN_DRIVE_SPEED = 0.36;
     private static final double GRAVITY = 0.02;
 
-    private BlockPos startTie;
-    private BlockPos endTie;
+    private @Nullable BlockPos startTie;
+    private @Nullable BlockPos endTie;
     private double splinePieceProgress = 0; // t
     private double motionScale; // t-distance per block
     private double trackVelocity;
@@ -56,7 +57,6 @@ public class TrackFollowerEntity extends Entity {
     private int oriInterpSteps;
 
     private static final TrackedData<Quaternionf> ORIENTATION = DataTracker.registerData(TrackFollowerEntity.class, TrackedDataHandlerRegistry.QUATERNIONF);
-    private static final TrackedData<Boolean> CHAIN_LIFTING = DataTracker.registerData(TrackFollowerEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     private final Matrix3d basis = new Matrix3d().identity();
 
     private final Quaternionf lastClientOrientation = new Quaternionf();
@@ -73,18 +73,51 @@ public class TrackFollowerEntity extends Entity {
         super(type, world);
     }
 
-    public TrackFollowerEntity(World world, Vec3d startPos, BlockPos startTie, BlockPos endTie, Vec3d velocity) {
+    public TrackFollowerEntity(World world) {
         this(RollerCart.TRACK_FOLLOWER.get(), world);
-
-        setStretch(startTie, endTie);
-        this.trackVelocity = velocity.multiply(1, 0, 1).length();
-
-        var startE = TrackTiesBlockEntity.of(this.getWorld(), this.startTie);
-        if (startE != null) {
-            this.setPosition(startPos);
-            this.getDataTracker().set(ORIENTATION, startE.pose().basis().getNormalizedRotation(new Quaternionf()));
-        }
     }
+
+    public static @Nullable TrackFollowerEntity create(World world, Vec3d startPos, BlockPos tie, Vec3d velocity) {
+
+        var tieE = TrackTiesBlockEntity.of(world, tie);
+        double trackVelocity, progress;
+        BlockPos start, end;
+        
+        if (tieE != null) {
+            var tieDir = new Vector3d(0, 0, 1).mul(tieE.pose().basis()).normalize();
+            var velDir = new Vector3d(velocity.getX(), velocity.getY(), velocity.getZ()).normalize();
+
+            if (tieDir.dot(velDir) >= 0) { // Heading in positive direction
+                trackVelocity = velocity.length();
+                start = tie;
+                end = tieE.nextPos();
+                progress = 0;
+            } else {
+                trackVelocity = -velocity.length();
+                start = tieE.prevPos();
+                end = tie;
+                progress = 1;
+            }
+            
+        } else {
+            return null;
+        }
+
+        var startE = TrackTiesBlockEntity.of(world, start);
+        if (startE != null) {
+            var follower = new TrackFollowerEntity(world);
+            follower.trackVelocity = trackVelocity;
+            follower.splinePieceProgress = progress;
+            follower.setStretch(start, end);
+            follower.setPosition(startPos);
+            follower.getDataTracker().set(ORIENTATION, startE.pose().basis().getNormalizedRotation(new Quaternionf()));
+
+            return follower;
+        } 
+
+        return null;
+    }
+
     public BlockPos getStartTie() {
         return this.startTie;
     }
@@ -96,22 +129,6 @@ public class TrackFollowerEntity extends Entity {
     public void setStretch(BlockPos start, BlockPos end) {
         this.startTie = start;
         this.endTie = end;
-
-        var startE = TrackTiesBlockEntity.of(this.getWorld(), this.startTie);
-        if (startE != null) {
-            this.basis.set(startE.pose().basis());
-            var endE = TrackTiesBlockEntity.of(this.getWorld(), this.endTie);
-            if (endE != null) {
-                // Initial approximation of motion scale; from the next tick onward the derivative of the track spline is used
-                this.motionScale = 1 / startE.pose().translation().distance(endE.pose().translation());
-            } else {
-                this.motionScale = 1;
-            }
-        }
-
-        if (this.splinePieceProgress < 0) {
-            this.splinePieceProgress = 0;
-        }
     }
 
     // For more accurate client side position interpolation, we can conveniently use the
@@ -121,17 +138,8 @@ public class TrackFollowerEntity extends Entity {
         double t = 1 / (double)step;
 
         var clientPos = new Vector3d(this.getX(), this.getY(), this.getZ());
-
-        var cv = this.getVelocity();
-        var clientVel = new Vector3d(cv.getX(), cv.getY(), cv.getZ());
-
-        var newClientPos = new Vector3d();
-        var newClientVel = new Vector3d();
-        Pose.cubicHermiteSpline(t, 1, clientPos, clientVel, this.serverPosition, this.serverVelocity,
-                newClientPos, newClientVel);
-
-        this.setPosition(newClientPos.x(), newClientPos.y(), newClientPos.z());
-        this.setVelocity(newClientVel.x(), newClientVel.y(), newClientVel.z());
+        clientPos.lerp(serverPosition, t);
+        this.setPosition(clientPos.x(), clientPos.y(), clientPos.z());
     }
 
     @Override
@@ -277,12 +285,10 @@ public class TrackFollowerEntity extends Entity {
                         }
                     }
                 }
-                boolean nearPoweredActivator = poweredActivatorPos != null;
-
-                if (passenger instanceof AbstractMinecartEntity minecart) {
+                if (passenger instanceof AbstractMinecartEntity) {
                     if (passenger instanceof HopperMinecartEntity hopper) {
-                        hopper.setEnabled(!nearPoweredActivator);
-                    } else if (nearPoweredActivator) {
+                        hopper.setEnabled(poweredActivatorPos == null);
+                    } else if (poweredActivatorPos != null) {
                         if (passenger instanceof TntMinecartEntity tnt && tnt.getFuseTicks() < 0) {
                             tnt.prime();
                         } else if (passenger instanceof MinecartEntity mc && mc.hasPassengers()) {
@@ -294,7 +300,6 @@ public class TrackFollowerEntity extends Entity {
                 }
 
                 boolean powered = startE.power() > 0;
-                this.dataTracker.set(CHAIN_LIFTING, trackType == TrackItem.Type.CHAIN || (trackType == TrackItem.Type.STATION && powered));
                 switch(trackType) {
                     case CHAIN -> {
                         double target = powered ? CHAIN_DRIVE_SPEED : 0.05;
@@ -406,7 +411,6 @@ public class TrackFollowerEntity extends Entity {
     @Override
     protected void initDataTracker() {
         this.dataTracker.startTracking(ORIENTATION, new Quaternionf().identity());
-        this.dataTracker.startTracking(CHAIN_LIFTING, false);
     }
 
     @Override
@@ -449,10 +453,6 @@ public class TrackFollowerEntity extends Entity {
         nbt.putDouble("motion_scale", this.motionScale);
         nbt.putDouble("spline_piece_progress", this.splinePieceProgress);
         nbt.putBoolean("reversed", this.reversed);
-    }
-
-    public boolean isChainLifting() {
-        return this.dataTracker.get(CHAIN_LIFTING);
     }
 
 }

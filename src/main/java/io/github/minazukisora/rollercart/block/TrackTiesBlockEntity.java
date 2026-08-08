@@ -121,6 +121,14 @@ public class TrackTiesBlockEntity extends BlockEntity {
         return of(this.getWorld(), this.prev);
     }
 
+    public @Nullable BlockPos nextPos() {
+        return next;
+    }
+
+    public @Nullable BlockPos prevPos() {
+        return prev;
+    }
+
     public Pose pose() {
         return this.pose;
     }

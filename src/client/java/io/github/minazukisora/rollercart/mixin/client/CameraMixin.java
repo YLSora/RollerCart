@@ -3,11 +3,13 @@ package io.github.minazukisora.rollercart.mixin.client;
 import io.github.minazukisora.rollercart.RollerCartClient;
 import io.github.minazukisora.rollercart.entity.TrackFollowerEntity;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import org.joml.Vector3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,46 +20,57 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Camera.class)
 public abstract class CameraMixin {
     @Shadow protected abstract void setPos(Vec3d pos);
+    // @Shadow protected abstract void setRotation(float yaw, float pitch);
     @Shadow protected abstract void moveBy(double x, double y, double z);
-    @Shadow protected abstract double clipToSpace(double desiredCameraDistance);
+    //@Shadow protected abstract double clipToSpace(double desiredCameraDistance);
     @Shadow @Final private Quaternionf rotation;
-    @Shadow @Final private Vector3f horizontalPlane;
-    @Shadow @Final private Vector3f verticalPlane;
-    @Shadow @Final private Vector3f diagonalPlane;
+    @Shadow private Entity focusedEntity;
+    // @Shadow @Final private Vector3f horizontalPlane;
+    // @Shadow @Final private Vector3f verticalPlane;
+    // @Shadow @Final private Vector3f diagonalPlane;
 
-    @Inject(method = "update(Lnet/minecraft/world/BlockView;Lnet/minecraft/entity/Entity;ZZF)V", at = @At("RETURN"))
-    private void rollercart$updateTrackCamera(BlockView area, Entity self, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo info) {
-        Entity cart = self.getVehicle();
-        if (cart == null || !(cart.getVehicle() instanceof TrackFollowerEntity trackFollower)) return;
+    @Inject(method = "update(Lnet/minecraft/world/BlockView;Lnet/minecraft/entity/Entity;ZZF)V",
+            at = @At(value = "INVOKE", shift = At.Shift.AFTER, ordinal = 0, target = "Lnet/minecraft/client/render/Camera;setPos(DDD)V"))
+    private void CamPos(BlockView area, Entity self, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo info) {
+        var vehicle = self.getVehicle();
+        if (vehicle != null) {
+            var tf = vehicle.getVehicle();
+            if (tf instanceof TrackFollowerEntity trackFollower) {
+                var world = self.getWorld();
+                var diff = self.getPos().add(0, self.getStandingEyeHeight(), 0).subtract(trackFollower.getPos());
+                var camPos = new Vector3d(diff.getX(), diff.getY(), diff.getZ());
+                if (world.isClient()) {
+                    var rot = new Quaternionf();
+                    trackFollower.getClientOrientation(rot, tickDelta);
+                    rot.transform(camPos);
 
-        Quaternionf trackRotation = new Quaternionf();
-        trackFollower.getClientOrientation(trackRotation, tickDelta);
-        Vec3d eye = self.getCameraPosVec(tickDelta);
-        org.joml.Vector3d relativeEye = new org.joml.Vector3d(
-                eye.getX() - trackFollower.getLerpedPos(tickDelta).getX(),
-                eye.getY() - trackFollower.getLerpedPos(tickDelta).getY(),
-                eye.getZ() - trackFollower.getLerpedPos(tickDelta).getZ());
-        trackRotation.transform(relativeEye);
-        Vec3d transformedEye = new Vec3d(relativeEye.x, relativeEye.y, relativeEye.z).add(trackFollower.getLerpedPos(tickDelta));
-
-        if (!RollerCartClient.CFG_ROTATE_CAMERA.get()) {
-            Vec3d offset = ((Camera)(Object)this).getPos().subtract(eye);
-            this.setPos(transformedEye.add(offset));
-            return;
+                    this.setPos(new Vec3d(camPos.x(), camPos.y(), camPos.z()).add(trackFollower.getLerpedPos(tickDelta)));
+                }
+            }
         }
+    }
 
-        // Replicates the upstream Splinecart camera orientation exactly:
-        //   rotation = trackRot * Ry(90 + vehicleYaw) * (vanilla rotation)
-        // where vanilla `rotation` = Ry(-playerYaw) * Rx(playerPitch) was set by
-        // Camera.setRotation during update. Using the player's absolute look angles
-        // (not accumulated deltas) keeps mouse direction/sensitivity matching vanilla,
-        // and trackRot carries the cart's bank so the camera rolls with the track.
-        new Quaternionf().rotationY((float) Math.toRadians(90 + cart.getYaw(tickDelta))).mul(this.rotation, this.rotation);
-        trackRotation.mul(this.rotation, this.rotation);
-        this.horizontalPlane.set(0, 0, 1).rotate(this.rotation);
-        this.verticalPlane.set(0, 1, 0).rotate(this.rotation);
-        this.diagonalPlane.set(1, 0, 0).rotate(this.rotation);
-        this.setPos(transformedEye);
-        if (thirdPerson) this.moveBy(-this.clipToSpace(4), 0, 0);
+
+@Inject(method = "setRotation(FF)V",
+    at = @At(value = "INVOKE", shift = At.Shift.AFTER, ordinal = 0, target = "Lorg/joml/Quaternionf;rotationYXZ(FFF)Lorg/joml/Quaternionf;", remap = false))
+    private void CamRotation(float yaw, float pitch, CallbackInfo info) {
+        var self = this.focusedEntity;
+        var vehicle = self.getVehicle();
+        var tickDelta = MinecraftClient.getInstance().getTickDelta();
+        if (vehicle != null) {
+            var tf = vehicle.getVehicle();
+            if (tf instanceof TrackFollowerEntity trackFollower) {
+                var world = self.getWorld();
+                if (world.isClient()) {
+                    var rot = new Quaternionf();
+                    trackFollower.getClientOrientation(rot, tickDelta);
+
+                    if (RollerCartClient.CFG_ROTATE_CAMERA.get()) {
+                        //   rotation = trackRot * Ry(90 + vehicleYaw) * (vanilla rotation)
+                        rot.mul(RotationAxis.POSITIVE_Y.rotationDegrees(90 + vehicle.getYaw(tickDelta)).mul(rotation, rotation), rotation);
+                    }
+                }
+            }
+        }
     }
 }
