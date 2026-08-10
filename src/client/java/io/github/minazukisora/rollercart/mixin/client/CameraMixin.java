@@ -2,10 +2,10 @@ package io.github.minazukisora.rollercart.mixin.client;
 
 import io.github.minazukisora.rollercart.RollerCartClient;
 import io.github.minazukisora.rollercart.entity.TrackFollowerEntity;
+import io.github.minazukisora.rollercart.util.TrackCameraTransform;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 import org.joml.Quaternionf;
@@ -66,8 +66,7 @@ public abstract class CameraMixin {
                     trackFollower.getClientOrientation(rot, tickDelta);
 
                     if (RollerCartClient.CFG_ROTATE_CAMERA.get()) {
-                        //   rotation = trackRot * Ry(90 + vehicleYaw) * (vanilla rotation)
-                        rot.mul(RotationAxis.POSITIVE_Y.rotationDegrees(90 + vehicle.getYaw(tickDelta)).mul(rotation, rotation), rotation);
+                        TrackCameraTransform.apply(rot, trackFollower.getCameraYawOffset(), rotation);
                     }
                 }
             }

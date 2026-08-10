@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:stick"
+    },
+    "B": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "C": {
+      "item": "minecraft:phantom_membrane"
+    }
+  },
+  "pattern": [
+    "BCB",
+    "BAB",
+    "BCB"
+  ],
+  "result": {
+    "count": 8,
+    "item": "rollercart:invisible_ties"
+  }
+}

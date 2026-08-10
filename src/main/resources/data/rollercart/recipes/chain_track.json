@@ -7,15 +7,18 @@
     },
     "B": {
       "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:chain"
     }
   },
   "pattern": [
-    "B",
-    "A",
-    "B"
+    " B ",
+    "CAC",
+    " B "
   ],
   "result": {
     "count": 4,
-    "id": "rollercart:track"
+    "item": "rollercart:chain_track"
   }
 }

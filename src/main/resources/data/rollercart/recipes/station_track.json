@@ -3,25 +3,22 @@
   "category": "misc",
   "key": {
     "A": {
-      "item": "minecraft:stick"
+      "item": "minecraft:rail"
     },
     "B": {
-      "tag": "minecraft:wooden_slabs"
+      "item": "minecraft:iron_ingot"
     },
     "C": {
-      "item": "minecraft:diamond"
-    },
-    "D": {
       "item": "minecraft:redstone"
     }
   },
   "pattern": [
-    "BDB",
-    "BAB",
-    "BCB"
+    " B ",
+    "CAC",
+    " B "
   ],
   "result": {
-    "count": 8,
-    "id": "rollercart:shuttle_ties"
+    "count": 4,
+    "item": "rollercart:station_track"
   }
 }

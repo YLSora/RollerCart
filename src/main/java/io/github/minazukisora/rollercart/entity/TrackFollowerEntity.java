@@ -7,6 +7,7 @@ import io.github.minazukisora.rollercart.block.SwitchTiesBlock;
 import io.github.minazukisora.rollercart.block.TrackTiesBlockEntity;
 import io.github.minazukisora.rollercart.item.TrackItem;
 import io.github.minazukisora.rollercart.util.SUtil;
+import io.github.minazukisora.rollercart.util.TrackCameraTransform;
 import io.github.minazukisora.rollercart.util.TrackSnapUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -57,6 +58,7 @@ public class TrackFollowerEntity extends Entity {
     private int oriInterpSteps;
 
     private static final TrackedData<Quaternionf> ORIENTATION = DataTracker.registerData(TrackFollowerEntity.class, TrackedDataHandlerRegistry.QUATERNIONF);
+    private static final TrackedData<Float> CAMERA_YAW_OFFSET = DataTracker.registerData(TrackFollowerEntity.class, TrackedDataHandlerRegistry.FLOAT);
     private final Matrix3d basis = new Matrix3d().identity();
 
     private final Quaternionf lastClientOrientation = new Quaternionf();
@@ -111,6 +113,8 @@ public class TrackFollowerEntity extends Entity {
             follower.setStretch(start, end);
             follower.setPosition(startPos);
             follower.getDataTracker().set(ORIENTATION, startE.pose().basis().getNormalizedRotation(new Quaternionf()));
+            follower.getDataTracker().set(CAMERA_YAW_OFFSET,
+                    TrackCameraTransform.horizontalYawOffset(velocity.getX(), velocity.getZ()));
 
             return follower;
         } 
@@ -173,6 +177,10 @@ public class TrackFollowerEntity extends Entity {
 
     public void getClientOrientation(Quaternionf q, float tickDelta) {
         this.lastClientOrientation.slerp(this.clientOrientation, tickDelta, q);
+    }
+
+    public float getCameraYawOffset() {
+        return this.getDataTracker().get(CAMERA_YAW_OFFSET);
     }
 
     public Vec3d getClientMotion() {
@@ -411,6 +419,7 @@ public class TrackFollowerEntity extends Entity {
     @Override
     protected void initDataTracker() {
         this.dataTracker.startTracking(ORIENTATION, new Quaternionf().identity());
+        this.dataTracker.startTracking(CAMERA_YAW_OFFSET, 0.0F);
     }
 
     @Override
@@ -439,6 +448,7 @@ public class TrackFollowerEntity extends Entity {
         this.motionScale = nbt.getDouble("motion_scale");
         this.splinePieceProgress = nbt.getDouble("spline_piece_progress");
         this.reversed = nbt.getBoolean("reversed");
+        this.getDataTracker().set(CAMERA_YAW_OFFSET, nbt.getFloat("camera_yaw_offset"));
     }
 
     @Override
@@ -453,6 +463,7 @@ public class TrackFollowerEntity extends Entity {
         nbt.putDouble("motion_scale", this.motionScale);
         nbt.putDouble("spline_piece_progress", this.splinePieceProgress);
         nbt.putBoolean("reversed", this.reversed);
+        nbt.putFloat("camera_yaw_offset", this.getCameraYawOffset());
     }
 
 }

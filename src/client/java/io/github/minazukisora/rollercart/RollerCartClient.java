@@ -7,6 +7,7 @@ import io.github.minazukisora.rollercart.component.OriginComponent;
 import io.github.minazukisora.rollercart.config.Config;
 import io.github.minazukisora.rollercart.config.ConfigOption;
 import io.github.minazukisora.rollercart.entity.TrackFollowerEntity;
+import io.github.minazukisora.rollercart.util.TrackCameraTransform;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
@@ -86,10 +87,10 @@ public class RollerCartClient {
                 return;
             }
 
-            Vector3f angles = event.getCamera().getRotation().getEulerAnglesYXZ(new Vector3f());
-            event.setYaw((float) -Math.toDegrees(angles.y));
-            event.setPitch((float) Math.toDegrees(angles.x));
-            event.setRoll((float) Math.toDegrees(angles.z));
+            Vector3f angles = TrackCameraTransform.toForgeAngles(event.getCamera().getRotation(), new Vector3f());
+            event.setYaw(angles.x());
+            event.setPitch(angles.y());
+            event.setRoll(angles.z());
         }
 
         @SubscribeEvent

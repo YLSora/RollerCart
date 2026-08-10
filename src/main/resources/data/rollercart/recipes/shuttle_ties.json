@@ -9,16 +9,19 @@
       "tag": "minecraft:wooden_slabs"
     },
     "C": {
-      "item": "minecraft:phantom_membrane"
+      "item": "minecraft:diamond"
+    },
+    "D": {
+      "item": "minecraft:redstone"
     }
   },
   "pattern": [
-    "BCB",
+    "BDB",
     "BAB",
     "BCB"
   ],
   "result": {
     "count": 8,
-    "id": "rollercart:invisible_ties"
+    "item": "rollercart:shuttle_ties"
   }
 }

@@ -24,13 +24,11 @@ public class EntityRenderDispatcherMixin {
     private void rollercart$rotateEntitiesOnTrackFollower(Entity entity, double x, double y, double z, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo info) {
         if (entity instanceof TrackFollowerEntity) return;
 
-        Entity cart = null;
         Entity vehicle = entity;
         while (vehicle != null) {
             Entity next = vehicle.getVehicle();
 
             if (next instanceof TrackFollowerEntity trackFollower) {
-                cart = vehicle;
                 var rotation = new Quaternionf();
                 trackFollower.getClientOrientation(rotation, tickDelta);
 
@@ -46,7 +44,7 @@ public class EntityRenderDispatcherMixin {
                 matrices.translate(diff.x(), diff.y(), diff.z());
 
                 if (entity instanceof LivingEntity) {
-                    matrices.multiply(RotationAxis.POSITIVE_Y.rotation((float) Math.toRadians(90 + cart.getYaw(tickDelta))));
+                    matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(trackFollower.getCameraYawOffset()));
                 } else {
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotation(-MathHelper.PI / 2 - yaw * MathHelper.RADIANS_PER_DEGREE));
                 }

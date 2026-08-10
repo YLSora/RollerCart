@@ -9,7 +9,7 @@
       "item": "minecraft:iron_ingot"
     },
     "C": {
-      "item": "minecraft:redstone"
+      "tag": "minecraft:wool"
     }
   },
   "pattern": [
@@ -19,6 +19,6 @@
   ],
   "result": {
     "count": 4,
-    "id": "rollercart:station_track"
+    "item": "rollercart:brake_track"
   }
 }
