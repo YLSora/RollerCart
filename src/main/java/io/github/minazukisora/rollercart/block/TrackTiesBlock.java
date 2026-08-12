@@ -35,14 +35,14 @@ public class TrackTiesBlock extends FacingBlock implements BlockEntityProvider {
 
     static {
         Map<Direction, Integer> upMap = new HashMap<>();
-        upMap.put(Direction.NORTH, 2);
+        upMap.put(Direction.NORTH, 0);
         upMap.put(Direction.WEST, 1);
-        upMap.put(Direction.SOUTH, 0);
+        upMap.put(Direction.SOUTH, 2);
         upMap.put(Direction.EAST, 3);
         Map<Direction, Integer> downMap = new HashMap<>();
-        downMap.put(Direction.NORTH, 0);
+        downMap.put(Direction.NORTH, 2);
         downMap.put(Direction.WEST, 1);
-        downMap.put(Direction.SOUTH, 2);
+        downMap.put(Direction.SOUTH, 0);
         downMap.put(Direction.EAST, 3);
         Map<Direction, Integer> northMap = new HashMap<>();
         northMap.put(Direction.DOWN, 0);
@@ -50,9 +50,9 @@ public class TrackTiesBlock extends FacingBlock implements BlockEntityProvider {
         northMap.put(Direction.UP, 2);
         northMap.put(Direction.EAST, 3);
         Map<Direction, Integer> eastMap = new HashMap<>();
-        eastMap.put(Direction.NORTH, 3);
+        eastMap.put(Direction.NORTH, 1);
         eastMap.put(Direction.UP, 2);
-        eastMap.put(Direction.SOUTH, 1);
+        eastMap.put(Direction.SOUTH, 3);
         eastMap.put(Direction.DOWN, 0);
         Map<Direction, Integer> southMap = new HashMap<>();
         southMap.put(Direction.UP, 2);
@@ -60,9 +60,9 @@ public class TrackTiesBlock extends FacingBlock implements BlockEntityProvider {
         southMap.put(Direction.DOWN, 0);
         southMap.put(Direction.EAST, 1);
         Map<Direction, Integer> westMap = new HashMap<>();
-        westMap.put(Direction.NORTH, 1);
+        westMap.put(Direction.NORTH, 3);
         westMap.put(Direction.DOWN, 0);
-        westMap.put(Direction.SOUTH, 3);
+        westMap.put(Direction.SOUTH, 1);
         westMap.put(Direction.UP, 2);
         POINTING_MAP.put(Direction.UP, upMap);
         POINTING_MAP.put(Direction.DOWN, downMap);

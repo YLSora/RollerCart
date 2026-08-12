@@ -103,11 +103,11 @@ public class TrackTiesBlockEntityRenderer implements BlockEntityRenderer<TrackTi
                         start, end, segs, u0, u1, 0, packedColor, overlay);
             } else if (trackType == TrackItem.Type.CHAIN) {
                 float speed = entity.power() > 0 ? 0.15f : 0.05f;
-                float vOffset = ((world.getTime() + tickDelta) * speed) % 1.0f;
+                float vOffset = ((world.getTime() % 20L + tickDelta) * speed) % 1.0f;
                 renderTrack(world, matrices.peek(), vertexConsumers.getBuffer(RenderLayer.getEntityCutoutNoCull(TRACK_OVERLAY_TEXTURE)),
                         start, end, segs, u0, u1, vOffset, WHITE, overlay);
             } else if (trackType == TrackItem.Type.STATION) {
-                float vOffset = entity.power() > 0 ? ((world.getTime() + tickDelta) * 0.15f) % 1.0f : 0.0f;
+                float vOffset = entity.power() > 0 ? ((world.getTime() % 20L + tickDelta) * 0.15f) % 1.0f : 0.0f;
                 renderTrack(world, matrices.peek(), vertexConsumers.getBuffer(RenderLayer.getEntityCutoutNoCull(TRACK_OVERLAY_TEXTURE)),
                         start, end, segs, 0.5f, 0.75f, vOffset, WHITE, overlay);
             }
