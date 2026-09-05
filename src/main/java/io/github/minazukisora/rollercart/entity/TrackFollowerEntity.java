@@ -7,6 +7,7 @@ import io.github.minazukisora.rollercart.block.SwitchTiesBlock;
 import io.github.minazukisora.rollercart.block.TrackTiesBlockEntity;
 import io.github.minazukisora.rollercart.item.TrackItem;
 import io.github.minazukisora.rollercart.util.SUtil;
+import io.github.minazukisora.rollercart.util.Pose;
 import io.github.minazukisora.rollercart.util.TrackCameraTransform;
 import io.github.minazukisora.rollercart.util.TrackSnapUtil;
 import net.minecraft.block.BlockState;
@@ -52,22 +53,18 @@ public class TrackFollowerEntity extends Entity {
     private double trackVelocity;
     private boolean reversed = false;
 
-    private final Vector3d serverPosition = new Vector3d();
-    private final Vector3d serverVelocity = new Vector3d();
-    private int positionInterpSteps;
-    private int oriInterpSteps;
+    private int trackSegment;
+    private double clientProgress;
+    private double lastClientProgress;
+    private double targetProgress;
+    private int progressInterpSteps;
+    private boolean hasClientTrack;
 
-    private static final TrackedData<Quaternionf> ORIENTATION = DataTracker.registerData(TrackFollowerEntity.class, TrackedDataHandlerRegistry.QUATERNIONF);
+    private static final TrackedData<NbtCompound> TRACK_STATE = DataTracker.registerData(TrackFollowerEntity.class, TrackedDataHandlerRegistry.NBT_COMPOUND);
     private static final TrackedData<Float> CAMERA_YAW_OFFSET = DataTracker.registerData(TrackFollowerEntity.class, TrackedDataHandlerRegistry.FLOAT);
     private final Matrix3d basis = new Matrix3d().identity();
 
-    private final Quaternionf lastClientOrientation = new Quaternionf();
-    private final Quaternionf clientOrientation = new Quaternionf();
-
     private boolean hadPassenger = false;
-
-    private boolean firstPositionUpdate = true;
-    private boolean firstOriUpdate = true;
 
     private Vec3d clientMotion = Vec3d.ZERO;
 
@@ -112,7 +109,7 @@ public class TrackFollowerEntity extends Entity {
             follower.splinePieceProgress = progress;
             follower.setStretch(start, end);
             follower.setPosition(startPos);
-            follower.getDataTracker().set(ORIENTATION, startE.pose().basis().getNormalizedRotation(new Quaternionf()));
+            follower.syncTrackState();
             follower.getDataTracker().set(CAMERA_YAW_OFFSET,
                     TrackCameraTransform.horizontalYawOffset(velocity.getX(), velocity.getZ()));
 
@@ -135,15 +132,39 @@ public class TrackFollowerEntity extends Entity {
         this.endTie = end;
     }
 
-    // For more accurate client side position interpolation, we can conveniently use the
-    // same cubic hermite spline formula rather than linear interpolation like vanilla,
-    // since we have not only the position but also its derivative (velocity)
-    protected void interpPos(int step) {
-        double t = 1 / (double)step;
+    private void syncTrackState() {
+        if (this.startTie == null || this.endTie == null) return;
+        var state = new NbtCompound();
+        state.putLong("start", this.startTie.asLong());
+        state.putLong("end", this.endTie.asLong());
+        state.putInt("segment", this.trackSegment);
+        state.putDouble("progress", this.trackSegment + this.splinePieceProgress);
+        this.dataTracker.set(TRACK_STATE, state);
+    }
 
-        var clientPos = new Vector3d(this.getX(), this.getY(), this.getZ());
-        clientPos.lerp(serverPosition, t);
-        this.setPosition(clientPos.x(), clientPos.y(), clientPos.z());
+    /** Samples the actual connected track, including frames that cross a tie. */
+    public @Nullable Pose getClientPose(float tickDelta) {
+        if (!this.hasClientTrack) return null;
+        double progress = this.lastClientProgress
+                + (this.clientProgress - this.lastClientProgress) * tickDelta - this.trackSegment;
+        var start = TrackTiesBlockEntity.of(getWorld(), this.startTie);
+        var end = TrackTiesBlockEntity.of(getWorld(), this.endTie);
+        while (progress < 0 && start != null) {
+            end = start;
+            start = start.prev();
+            progress++;
+        }
+        while (progress > 1 && end != null) {
+            start = end;
+            end = end.next();
+            progress--;
+        }
+        // Track chunks can arrive after the entity's spawn/data packets.
+        if (start == null || end == null) return null;
+        var position = new Vector3d();
+        var orientation = new Matrix3d();
+        start.pose().interpolate(end.pose(), progress, position, orientation, new Vector3d());
+        return new Pose(position, orientation);
     }
 
     @Override
@@ -152,31 +173,28 @@ public class TrackFollowerEntity extends Entity {
 
         var world = this.getWorld();
         if (world.isClient()) {
-            this.clientMotion = this.getPos().negate();
-            if (this.positionInterpSteps > 0) {
-                this.interpPos(this.positionInterpSteps);
-                this.positionInterpSteps--;
-            } else {
-                this.refreshPosition();
-                this.setVelocity(this.serverVelocity.x(), this.serverVelocity.y(), this.serverVelocity.z());
+            var previousPosition = this.getPos();
+            this.lastClientProgress = this.clientProgress;
+            if (this.progressInterpSteps > 0) {
+                this.clientProgress += (this.targetProgress - this.clientProgress) / this.progressInterpSteps;
+                this.progressInterpSteps--;
             }
-            this.clientMotion = this.clientMotion.add(this.getPos());
-
-            this.lastClientOrientation.set(this.clientOrientation);
-            if (this.oriInterpSteps > 0) {
-                float delta = 1 / (float) oriInterpSteps;
-                this.clientOrientation.slerp(this.getDataTracker().get(ORIENTATION), delta);
-                this.oriInterpSteps--;
-            } else {
-                this.clientOrientation.set(this.getDataTracker().get(ORIENTATION));
+            var pose = getClientPose(1);
+            if (pose != null) {
+                var position = pose.translation();
+                this.setPosition(position.x(), position.y(), position.z());
+                this.basis.set(pose.basis());
             }
+            this.clientMotion = this.getPos().subtract(previousPosition);
+            this.setVelocity(this.clientMotion);
         } else {
             this.updateServer();
         }
     }
 
     public void getClientOrientation(Quaternionf q, float tickDelta) {
-        this.lastClientOrientation.slerp(this.clientOrientation, tickDelta, q);
+        var pose = getClientPose(tickDelta);
+        (pose == null ? this.basis : pose.basis()).getNormalizedRotation(q);
     }
 
     public float getCameraYawOffset() {
@@ -246,6 +264,7 @@ public class TrackFollowerEntity extends Entity {
                                 }
                             }
                             this.setStretch(this.endTie, nextE.getPos());
+                            this.trackSegment++;
                             startE = endE;
                             endE = nextE;
                         }
@@ -262,6 +281,7 @@ public class TrackFollowerEntity extends Entity {
                             return;
                         } else {
                             this.setStretch(nextE.getPos(), this.startTie);
+                            this.trackSegment--;
                             endE = startE;
                             startE = nextE;
                         }
@@ -275,7 +295,7 @@ public class TrackFollowerEntity extends Entity {
                 TrackItem.Type trackType = startE.getTrackType();
 
                 this.setPosition(pos.x(), pos.y(), pos.z());
-                this.getDataTracker().set(ORIENTATION, this.basis.getNormalizedRotation(new Quaternionf()));
+                this.syncTrackState();
                 this.motionScale = 1 / grad.length();
 
                 double dt = this.trackVelocity * this.motionScale * (this.reversed ? -1 : 1); // Change in spline progress per tick
@@ -394,21 +414,13 @@ public class TrackFollowerEntity extends Entity {
 
     @Override
     public void updateTrackedPositionAndAngles(double x, double y, double z, float yaw, float pitch, int interpolationSteps, boolean interpolate) {
-        if (this.firstPositionUpdate) {
-            this.firstPositionUpdate = false;
-            super.updateTrackedPositionAndAngles(x, y, z, yaw, pitch, interpolationSteps, interpolate);
-        }
-
-        this.serverPosition.set(x, y, z);
-        this.positionInterpSteps = interpolationSteps + 2;
-        this.setYaw(yaw);
-        this.setPitch(pitch);
+        // TRACK_STATE owns client motion; vanilla XYZ packets must not pull it off the spline.
     }
 
     // This method should be called updateTrackedVelocity, its usage is very similar to the above method
     @Override
     public void setVelocityClient(double x, double y, double z) {
-        this.serverVelocity.set(x, y, z);
+        // Client velocity is derived from consecutive samples of the track.
     }
 
     @Override
@@ -418,7 +430,7 @@ public class TrackFollowerEntity extends Entity {
 
     @Override
     protected void initDataTracker() {
-        this.dataTracker.startTracking(ORIENTATION, new Quaternionf().identity());
+        this.dataTracker.startTracking(TRACK_STATE, new NbtCompound());
         this.dataTracker.startTracking(CAMERA_YAW_OFFSET, 0.0F);
     }
 
@@ -426,13 +438,18 @@ public class TrackFollowerEntity extends Entity {
     public void onTrackedDataSet(TrackedData<?> data) {
         super.onTrackedDataSet(data);
 
-        if (data.equals(ORIENTATION)) {
-            if (this.firstOriUpdate) {
-                this.firstOriUpdate = false;
-                this.clientOrientation.set(getDataTracker().get(ORIENTATION));
-                this.lastClientOrientation.set(this.clientOrientation);
+        if (getWorld().isClient() && data.equals(TRACK_STATE)) {
+            var state = this.dataTracker.get(TRACK_STATE);
+            if (state.isEmpty()) return;
+            this.startTie = BlockPos.fromLong(state.getLong("start"));
+            this.endTie = BlockPos.fromLong(state.getLong("end"));
+            this.trackSegment = state.getInt("segment");
+            this.targetProgress = state.getDouble("progress");
+            if (!this.hasClientTrack) {
+                this.clientProgress = this.lastClientProgress = this.targetProgress;
+                this.hasClientTrack = true;
             }
-            this.oriInterpSteps = this.getType().getTrackTickInterval() + 2;
+            this.progressInterpSteps = this.getType().getTrackTickInterval() + 2;
         }
     }
 
@@ -448,6 +465,7 @@ public class TrackFollowerEntity extends Entity {
         this.motionScale = nbt.getDouble("motion_scale");
         this.splinePieceProgress = nbt.getDouble("spline_piece_progress");
         this.reversed = nbt.getBoolean("reversed");
+        this.syncTrackState();
         this.getDataTracker().set(CAMERA_YAW_OFFSET, nbt.getFloat("camera_yaw_offset"));
     }
 

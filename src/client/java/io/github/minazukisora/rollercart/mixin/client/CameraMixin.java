@@ -36,6 +36,8 @@ public abstract class CameraMixin {
         if (vehicle != null) {
             var tf = vehicle.getVehicle();
             if (tf instanceof TrackFollowerEntity trackFollower) {
+                var pose = trackFollower.getClientPose(tickDelta);
+                if (pose == null) return;
                 var world = self.getWorld();
                 var diff = self.getPos().add(0, self.getStandingEyeHeight(), 0).subtract(trackFollower.getPos());
                 var camPos = new Vector3d(diff.getX(), diff.getY(), diff.getZ());
@@ -44,7 +46,8 @@ public abstract class CameraMixin {
                     trackFollower.getClientOrientation(rot, tickDelta);
                     rot.transform(camPos);
 
-                    this.setPos(new Vec3d(camPos.x(), camPos.y(), camPos.z()).add(trackFollower.getLerpedPos(tickDelta)));
+                    var position = pose.translation();
+                    this.setPos(new Vec3d(camPos.x() + position.x(), camPos.y() + position.y(), camPos.z() + position.z()));
                 }
             }
         }

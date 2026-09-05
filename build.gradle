@@ -23,6 +23,12 @@ loom {
 	forge {
 		mixinConfigs = ["rollercart.mixins.json", "rollercart.client.mixins.json"]
 	}
+	runs.configureEach {
+		// Use processed Gradle output, not stale IDE copies of mods.toml.
+		environmentVariable 'MOD_CLASSES', sourceSets.main.output.files.collect {
+			"main%%${it.absolutePath}"
+		}.join(File.pathSeparator)
+	}
 }
 
 sourceSets.main {

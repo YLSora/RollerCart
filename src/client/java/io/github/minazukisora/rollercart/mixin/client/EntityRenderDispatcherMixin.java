@@ -6,6 +6,7 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.joml.Quaternionf;
@@ -29,22 +30,35 @@ public class EntityRenderDispatcherMixin {
             Entity next = vehicle.getVehicle();
 
             if (next instanceof TrackFollowerEntity trackFollower) {
-                var rotation = new Quaternionf();
-                trackFollower.getClientOrientation(rotation, tickDelta);
+                var pose = trackFollower.getClientPose(tickDelta);
+                if (pose == null) return;
+                var rotation = pose.basis().getNormalizedRotation(new Quaternionf());
 
                 matrices.push();
                 onTrackFollower = true;
 
-                var dv3d = entity.getLerpedPos(tickDelta).subtract(trackFollower.getLerpedPos(tickDelta));
+                var dv3d = entity.getPos().subtract(trackFollower.getPos());
                 var diff = new Vector3d(dv3d.getX(), dv3d.getY(), dv3d.getZ());
-                matrices.translate(-diff.x(), -diff.y(), -diff.z());
+                var position = pose.translation();
+                matrices.translate(
+                        position.x() - MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX()),
+                        position.y() - MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY()),
+                        position.z() - MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ()));
 
                 matrices.multiply(rotation);
 
                 matrices.translate(diff.x(), diff.y(), diff.z());
+                if (entity instanceof AbstractMinecartEntity) {
+                    // Vanilla's 6/16 model lift leaves its bottom 1/16 above the rail.
+                    matrices.translate(0, -1.0 / 16.0, 0);
+                }
 
                 if (entity instanceof LivingEntity) {
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(trackFollower.getCameraYawOffset()));
+                } else if (entity instanceof AbstractMinecartEntity) {
+                    // MinecartEntityRenderer applies (180 - yaw), so cancel with +yaw.
+                    // The remaining 90 degrees aligns the model's X axis with the track's Z axis.
+                    matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(yaw - 90.0F));
                 } else {
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotation(-MathHelper.PI / 2 - yaw * MathHelper.RADIANS_PER_DEGREE));
                 }
